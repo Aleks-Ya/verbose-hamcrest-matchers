@@ -11,27 +11,27 @@ import org.hamcrest.Matcher;
  *
  * @author yablokov a.
  */
-public class VerboseEqualsMatcher extends BaseMatcher<Object> {
+public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     private final Object expected;
     private final int deep;
     private final StringBuilder description = new StringBuilder();
 
-    private VerboseEqualsMatcher(Object expected, int deep) {
+    private VerboseEqualsMatcher(M expected, int deep) {
         this.expected = expected;
         this.deep = deep;
     }
 
     @Factory
-    public static Matcher<Object> verboseEqualsTo(Object expected) {
-        return new VerboseEqualsMatcher(expected, Integer.MAX_VALUE);
+    public static <T> Matcher<T> verboseEqualsTo(T expected) {
+        return new VerboseEqualsMatcher<>(expected, Integer.MAX_VALUE);
     }
 
     @Factory
-    public static Matcher<Object> verboseEqualsTo(Object expected, int maxDeep) {
+    public static <T> Matcher<T> verboseEqualsTo(T expected, int maxDeep) {
         if (maxDeep < 0) {
             throw new IllegalArgumentException("maxDeep is less than 0: " + maxDeep);
         }
-        return new VerboseEqualsMatcher(expected, maxDeep);
+        return new VerboseEqualsMatcher<>(expected, maxDeep);
     }
 
     @Override
