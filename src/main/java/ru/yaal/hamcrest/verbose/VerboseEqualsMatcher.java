@@ -5,6 +5,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
+import static java.lang.String.format;
+
 /**
  * If both objects are null then return true.
  * If one of objects is null then return false.
@@ -46,6 +48,11 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
         }
         if (expected == null) {
             description.append("null");
+            return false;
+        }
+        if (actual.getClass() != expected.getClass()) {
+            description.append(format("Different types: actual=%s, expected=%s",
+                    actual.getClass().getName(), expected.getClass().getName()));
             return false;
         }
         if (actual.equals(expected)) {

@@ -10,32 +10,38 @@ import static java.lang.String.format;
 /**
  * @author yablokov a.
  */
-class NotEqualFields {
+class NotEqualFields<T> {
     private final StringBuilder description = new StringBuilder();
     private final List<Object> processed = new ArrayList<>();
 
-    NotEqualFields(Object actual, Object expected) {
+    NotEqualFields(T actual, T expected) {
+        assert actual != null;
+        assert expected != null;
+        assert actual.getClass() == expected.getClass();
         try {
-            verboseEquals(null, actual, expected, description);
+            verboseEquals(actual.getClass().getName(), actual, expected, description);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
-    private void verboseEquals(Field field, Object actual, Object expected, StringBuilder description) throws IllegalAccessException {
+    private void verboseEquals(String place, Object actual, Object expected, StringBuilder description) throws IllegalAccessException {
+        assert place != null;
         if (actual == null && expected == null) {
             return;
         }
         if (actual == null) {
-            description.append("Actual object is null");
+            description.append(expected.toString());
             return;
         }
         if (expected == null) {
-            description.append("Expected object is null");
+            description.append("null");
             return;
         }
         if (actual.getClass() != expected.getClass()) {
-            description.append(format("Different classes: actual=%s, expected=%s",
+            description.append(place);
+            description.append(": ");
+            description.append(format("Different types: actual=%s, expected=%s",
                     actual.getClass().getName(), expected.getClass().getName()));
             return;
         }
@@ -43,17 +49,17 @@ class NotEqualFields {
             processed.add(actual);
             if (!actual.equals(expected)) {
                 if (isPrimitive(expected.getClass())) {
-                    description.append(field != null ? field.getDeclaringClass().getName() + "#" + field.getName() : "");
+                    description.append(place);
                     description.append(" = ");
                     description.append(expected.toString());
+                    description.append("\n");
                 } else {
                     for (Field subField : getAllFields(actual)) {
                         if (!subField.isAccessible()) {
                             subField.setAccessible(true);
                         }
-                        Object actualValue = subField.get(actual);
-                        Object expectedValue = subField.get(expected);
-                        verboseEquals(subField, actualValue, expectedValue, description);
+                        String placeName = subField.getDeclaringClass().getName() + "#" + subField.getName();
+                        verboseEquals(placeName, subField.get(actual), subField.get(expected), description);
                     }
                 }
             }

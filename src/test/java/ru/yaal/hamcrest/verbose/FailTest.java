@@ -53,7 +53,7 @@ public class FailTest {
     @Test
     public void differentClasses() {
         thrown.expect(AssertionError.class);
-        thrown.expectMessage("Different classes: actual=java.lang.Integer, expected=java.lang.Long");
+        thrown.expectMessage("Different types: actual=java.lang.Integer, expected=java.lang.Long");
         assertThat(1, verboseEqualsTo((Object) 1L));
     }
 }
