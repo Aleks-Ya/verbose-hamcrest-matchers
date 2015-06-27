@@ -70,10 +70,11 @@ class NotEqualFields<T> {
                         description.append(" : ");
                         description.append(format(" different arrays size: actual=%d, expected=%d\n",
                                 actualItems.length, expectedItems.length));
-                    }
-                    for (int i = 0; i < expectedItems.length; i++) {
-                        String placeInArray = place + "[" + i + "]";
-                        verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
+                    } else {
+                        for (int i = 0; i < expectedItems.length; i++) {
+                            String placeInArray = place + "[" + i + "]";
+                            verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
+                        }
                     }
                 } else {
                     for (Field subField : getAllFields(actual)) {
