@@ -7,6 +7,8 @@ import static ru.yaal.hamcrest.verbose.VerboseEqualsMatcher.verboseEqualsTo;
 
 /**
  * @author yablokov a.
+ * todo check collections
+ * todo check arrays
  */
 public class PassTest {
 

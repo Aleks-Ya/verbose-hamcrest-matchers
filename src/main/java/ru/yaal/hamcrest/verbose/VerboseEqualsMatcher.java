@@ -8,12 +8,13 @@ import org.hamcrest.Matcher;
 /**
  * If both objects are null then return true.
  * If one of objects is null then return false.
+ * todo documentation
  *
  * @author yablokov a.
  */
 public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     private final Object expected;
-    private final int deep;
+    private final int deep;// todo support deep
     private final StringBuilder description = new StringBuilder();
 
     private VerboseEqualsMatcher(M expected, int deep) {
