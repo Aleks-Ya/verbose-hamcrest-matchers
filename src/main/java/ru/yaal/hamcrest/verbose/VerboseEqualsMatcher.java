@@ -59,7 +59,10 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
             return true;
         } else {
             NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
+            description.append("\n");
             description.append(notEqualFields.getDescription());
+            description.append("     in: ");
+            description.append(actual.toString());
             return false;
         }
     }

@@ -13,6 +13,7 @@ import static java.lang.String.format;
 class NotEqualFields<T> {
     private final StringBuilder description = new StringBuilder();
     private final List<Object> processed = new ArrayList<>();
+    private int mismatchIndex = 0;
 
     NotEqualFields(T actual, T expected) {
         assert actual != null;
@@ -39,9 +40,11 @@ class NotEqualFields<T> {
             return;
         }
         if (actual.getClass() != expected.getClass()) {
+            description.append(++mismatchIndex);
+            description.append(") ");
             description.append(place);
             description.append(": ");
-            description.append(format("Different types: actual=%s, expected=%s",
+            description.append(format("Different types: actual=%s, expected=%s\n",
                     actual.getClass().getName(), expected.getClass().getName()));
             return;
         }
@@ -49,6 +52,8 @@ class NotEqualFields<T> {
             processed.add(actual);
             if (!actual.equals(expected)) {
                 if (isPrimitive(expected.getClass())) {
+                    description.append(++mismatchIndex);
+                    description.append(") ");
                     description.append(place);
                     description.append(" = ");
                     description.append(expected.toString());
