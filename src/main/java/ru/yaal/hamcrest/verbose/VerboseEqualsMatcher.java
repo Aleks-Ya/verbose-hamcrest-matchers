@@ -25,12 +25,12 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     }
 
     @Factory
-    public static <T> Matcher<T> verboseEqualsTo(T expected) {
+    public static <T> Matcher<T> verboseEqualTo(T expected) {
         return new VerboseEqualsMatcher<>(expected, Integer.MAX_VALUE);
     }
 
     @Factory
-    public static <T> Matcher<T> verboseEqualsTo(T expected, int maxDeep) {
+    public static <T> Matcher<T> verboseEqualTo(T expected, int maxDeep) {
         if (maxDeep < 0) {
             throw new IllegalArgumentException("maxDeep is less than 0: " + maxDeep);
         }

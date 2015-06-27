@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertThat;
-import static ru.yaal.hamcrest.verbose.VerboseEqualsMatcher.verboseEqualsTo;
+import static ru.yaal.hamcrest.verbose.VerboseEqualsMatcher.verboseEqualTo;
 
 /**
  * @author yablokov a.
@@ -22,21 +22,21 @@ public class FailTest {
     public void expectedIsNull() {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("null");
-        assertThat(1, verboseEqualsTo(null));
+        assertThat(1, VerboseEqualsMatcher.verboseEqualTo(null));
     }
 
     @Test
     public void actualIsNull() {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("1");
-        assertThat(null, verboseEqualsTo(1));
+        assertThat(null, VerboseEqualsMatcher.verboseEqualTo(1));
     }
 
     @Test
     public void primitive() {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("2");
-        assertThat(1, verboseEqualsTo(2));
+        assertThat(1, VerboseEqualsMatcher.verboseEqualTo(2));
     }
 
     @Test
@@ -50,14 +50,14 @@ public class FailTest {
         actual.ref = actual;
         thrown.expect(AssertionError.class);
         thrown.expectMessage("ru.yaal.hamcrest.verbose.CyclicReference#a = 1");
-        assertThat(actual, verboseEqualsTo(expected));
+        assertThat(actual, VerboseEqualsMatcher.verboseEqualTo(expected));
     }
 
     @Test
     public void differentClasses() {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("Different types: actual=java.lang.Integer, expected=java.lang.Long");
-        assertThat(1, verboseEqualsTo((Object) 1L));
+        assertThat(1, VerboseEqualsMatcher.verboseEqualTo((Object) 1L));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class FailTest {
         thrown.expectMessage("1) java.util.Arrays$ArrayList#a[0] = a");
         thrown.expectMessage("2) java.util.Arrays$ArrayList#a[1] = b");
         thrown.expectMessage("in: [a, b]");
-        assertThat(act, verboseEqualsTo(exp));
+        assertThat(act, VerboseEqualsMatcher.verboseEqualTo(exp));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class FailTest {
         thrown.expectMessage("1) [Ljava.lang.String;[0] = a");
         thrown.expectMessage("2) [Ljava.lang.String;[1] = b");
         thrown.expectMessage("in: [a, b]");
-        assertThat(act, verboseEqualsTo(exp));
+        assertThat(act, VerboseEqualsMatcher.verboseEqualTo(exp));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class FailTest {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("1) [Ljava.lang.String; different arrays size: actual=3, expected=2");
         thrown.expectMessage("in: [a, b]");
-        assertThat(act, verboseEqualsTo(exp));
+        assertThat(act, VerboseEqualsMatcher.verboseEqualTo(exp));
     }
 }
 
