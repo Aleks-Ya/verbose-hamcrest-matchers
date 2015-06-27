@@ -58,7 +58,7 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
         if (actual.equals(expected)) {
             return true;
         } else {
-            NotEqualFields notEqualFields = new NotEqualFields(actual, expected);
+            NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
             description.append(notEqualFields.getDescription());
             return false;
         }
