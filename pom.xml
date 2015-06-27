@@ -2,7 +2,7 @@
 
     <groupId>ru.yaal.hamcrest</groupId>
     <artifactId>verbose-hamcrest-matchers</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
 
     <name>Verbose Hamcrest Matchers</name>
     <description>A library of Hamcrest matchers that produce detailed output about error assertions.</description>
@@ -43,7 +43,7 @@
         <connection>scm:git:git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</connection>
         <developerConnection>scm:git:git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</developerConnection>
         <url>git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</url>
-      <tag>HEAD</tag>
+      <tag>verbose-hamcrest-matchers-1.1</tag>
   </scm>
 
     <dependencies>
