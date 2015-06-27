@@ -29,8 +29,8 @@ public class FailArraysTest {
         String[] exp = {"a", "b"};
         String[] act = {"a", "b", "c"};
         thrown.expect(AssertionError.class);
-        thrown.expectMessage("1) [Ljava.lang.String; different arrays size: actual=3, expected=2");
-        thrown.expectMessage("in: [a, b]");
+        thrown.expectMessage("1) [Ljava.lang.String; :  different arrays size: actual=3, expected=2");
+        thrown.expectMessage("     in: [a, b]");
         assertThat(act, VerboseEqualsMatcher.verboseEqualTo(exp));
     }
 }

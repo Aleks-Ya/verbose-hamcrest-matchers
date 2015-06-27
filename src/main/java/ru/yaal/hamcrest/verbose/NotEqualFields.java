@@ -14,13 +14,12 @@ class NotEqualFields<T> {
     private final StringBuilder description = new StringBuilder();
     private final List<Object> processed = new ArrayList<>();
     private int mismatchIndex = 0;
+    private boolean isEquals = true;
 
-    NotEqualFields(T actual, T expected) {
-        assert actual != null;
-        assert expected != null;
-        assert actual.getClass() == expected.getClass();
+    public NotEqualFields(T actual, T expected) {
         try {
-            verboseEquals(actual.getClass().getName(), actual, expected, description);
+            String place = actual != null ? actual.getClass().getName() : "";
+            verboseEquals(place, actual, expected, description);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -33,10 +32,13 @@ class NotEqualFields<T> {
         }
         if (actual == null) {
             description.append(expected.toString());
+            description.append("\n");
+            isEquals = false;
             return;
         }
         if (expected == null) {
             description.append("null");
+            isEquals = false;
             return;
         }
         if (actual.getClass() != expected.getClass()) {
@@ -45,11 +47,13 @@ class NotEqualFields<T> {
             description.append(": ");
             description.append(format("Different types: actual=%s, expected=%s\n",
                     actual.getClass().getName(), expected.getClass().getName()));
+            isEquals = false;
             return;
         }
         if (!processed.contains(actual)) {
             processed.add(actual);
-            if (!Helper.isEquals(expected, actual)) {
+            if (!isEquals(expected, actual)) {
+                isEquals = false;
                 if (isPrimitive(expected.getClass())) {
                     description.append(nextMismatchIndex());
                     description.append(place);
@@ -62,7 +66,7 @@ class NotEqualFields<T> {
                     if (expectedItems.length != actualItems.length) {
                         description.append(nextMismatchIndex());
                         description.append(place);
-//                        description.append(" : ");
+                        description.append(" : ");
                         description.append(format(" different arrays size: actual=%d, expected=%d\n",
                                 actualItems.length, expectedItems.length));
                     }
@@ -101,7 +105,7 @@ class NotEqualFields<T> {
         }
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description.toString();
     }
 
@@ -116,5 +120,17 @@ class NotEqualFields<T> {
                 clazz == Double.class ||
                 clazz == Character.class ||
                 clazz == String.class;
+    }
+
+    public boolean isEquals() {
+        return isEquals;
+    }
+
+    private static boolean isEquals(Object expected, Object actual) {
+        if (actual.getClass().isArray()) {
+            return Arrays.deepEquals((Object[]) actual, (Object[]) expected);
+        } else {
+            return actual.equals(expected);
+        }
     }
 }

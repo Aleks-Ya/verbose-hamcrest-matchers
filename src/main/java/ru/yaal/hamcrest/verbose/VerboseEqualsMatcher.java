@@ -5,7 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 
-import static java.lang.String.format;
+import java.util.Arrays;
 
 /**
  * If both objects are null then return true.
@@ -39,30 +39,14 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
 
     @Override
     public boolean matches(Object actual) {
-        if (actual == null && expected == null) {
-            return true;
-        }
-        if (actual == null) {
-            description.append(expected.toString());
-            return false;
-        }
-        if (expected == null) {
-            description.append("null");
-            return false;
-        }
-        if (actual.getClass() != expected.getClass()) {
-            description.append(format("Different types: actual=%s, expected=%s",
-                    actual.getClass().getName(), expected.getClass().getName()));
-            return false;
-        }
-        if (Helper.isEquals(expected, actual)) {
+        NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
+        if (notEqualFields.isEquals()) {
             return true;
         } else {
-            NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
             description.append("\n");
             description.append(notEqualFields.getDescription());
             description.append("     in: ");
-            description.append(Helper.asString(expected));
+            description.append(asString(expected));
             return false;
         }
     }
@@ -71,4 +55,15 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     public void describeTo(Description description) {
         description.appendText(this.description.toString());
     }
+
+    private static String asString(Object object) {
+        if (object == null) {
+            return "null";
+        } else if (object.getClass().isArray()) {
+            return Arrays.deepToString((Object[]) object);
+        } else {
+            return object.toString();
+        }
+    }
+
 }
