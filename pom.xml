@@ -1,9 +1,8 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>ru.yaal.hamcrest</groupId>
     <artifactId>verbose-hamcrest-matchers</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>Verbose Hamcrest Matchers</name>
     <description>A library of Hamcrest matchers that produce detailed output about error assertions.</description>
@@ -44,7 +43,8 @@
         <connection>scm:git:git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</connection>
         <developerConnection>scm:git:git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</developerConnection>
         <url>git@github.com:Aleks-Ya/verbose-hamcrest-matchers.git</url>
-    </scm>
+      <tag>verbose-hamcrest-matchers-1.0</tag>
+  </scm>
 
     <dependencies>
         <dependency>
