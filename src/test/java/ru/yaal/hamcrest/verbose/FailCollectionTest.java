@@ -22,10 +22,10 @@ public class FailCollectionTest {
         List<String> exp = Arrays.asList("a", "b");
         List<String> act = Arrays.asList("c", "d");
         thrown.expect(AssertionError.class);
-        thrown.expectMessage("1) java.util.Arrays$ArrayList#a[0] = a");
-        thrown.expectMessage("2) java.util.Arrays$ArrayList#a[1] = b");
+        thrown.expectMessage("1) java.util.Arrays$ArrayList[0] = a");
+        thrown.expectMessage("2) java.util.Arrays$ArrayList[1] = b");
         thrown.expectMessage("in: [a, b]");
-        assertThat(act, VerboseEqualsMatcher.verboseEqualTo(exp));
+        assertThat(act, verboseEqualTo(exp));
     }
 
     @Test
@@ -37,8 +37,8 @@ public class FailCollectionTest {
         expected.value = Arrays.asList("c", "d");
 
         thrown.expect(AssertionError.class);
-        thrown.expectMessage("1) java.util.Arrays$ArrayList#a[0] = c");
-        thrown.expectMessage("2) java.util.Arrays$ArrayList#a[1] = d");
+        thrown.expectMessage("1) ru.yaal.hamcrest.verbose.CollectionContainer#value[0] = c");
+        thrown.expectMessage("2) ru.yaal.hamcrest.verbose.CollectionContainer#value[1] = d");
         assertThat(actual, verboseEqualTo(expected));
     }
 }

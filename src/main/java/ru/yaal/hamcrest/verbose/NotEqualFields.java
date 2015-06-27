@@ -3,6 +3,7 @@ package ru.yaal.hamcrest.verbose;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -68,13 +69,22 @@ class NotEqualFields<T> {
                         description.append(nextMismatchIndex());
                         description.append(place);
                         description.append(" : ");
-                        description.append(format(" different arrays size: actual=%d, expected=%d\n",
+                        description.append(format(" different array lengths: actual=%d, expected=%d\n",
                                 actualItems.length, expectedItems.length));
                     } else {
-                        for (int i = 0; i < expectedItems.length; i++) {
-                            String placeInArray = place + "[" + i + "]";
-                            verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
-                        }
+                        processArray(place, expectedItems, actualItems);
+                    }
+                } else if (expected instanceof Collection) {
+                    Collection actCollection = (Collection) actual;
+                    Collection expCollection = (Collection) expected;
+                    if (actCollection.size() != expCollection.size()) {
+                        description.append(nextMismatchIndex());
+                        description.append(place);
+                        description.append(" : ");
+                        description.append(format(" different collection sizes: actual=%d, expected=%d\n",
+                                actCollection.size(), expCollection.size()));
+                    } else {
+                        processArray(place, expCollection.toArray(), actCollection.toArray());
                     }
                 } else {
                     for (Field subField : getAllFields(actual)) {
@@ -88,6 +98,14 @@ class NotEqualFields<T> {
             }
         }
     }
+
+    private void processArray(String place, Object[] expectedItems, Object[] actualItems) throws IllegalAccessException {
+        for (int i = 0; i < expectedItems.length; i++) {
+            String placeInArray = place + "[" + i + "]";
+            verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
+        }
+    }
+
 
     private String nextMismatchIndex() {
         return ++mismatchIndex + ") ";

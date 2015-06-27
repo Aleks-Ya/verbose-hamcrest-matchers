@@ -14,7 +14,6 @@ class CollectionContainer {
         if (o == null || getClass() != o.getClass()) return false;
         CollectionContainer container = (CollectionContainer) o;
         return !(value != null ? !value.equals(container.value) : container.value != null);
-
     }
 
     @Override
