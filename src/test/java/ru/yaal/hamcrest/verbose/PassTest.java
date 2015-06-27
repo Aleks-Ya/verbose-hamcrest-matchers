@@ -16,7 +16,13 @@ public class PassTest {
     }
 
     @Test
-    public void pass() {
+    public void primitives() {
         assertThat(1, verboseEqualsTo(1));
+        assertThat(1L, verboseEqualsTo(1L));
+        assertThat(1.1D, verboseEqualsTo(1.1D));
+        assertThat(1.1F, verboseEqualsTo(1.1F));
+        assertThat("str", verboseEqualsTo("str"));
+        assertThat("str", verboseEqualsTo("str"));
+        assertThat('a', verboseEqualsTo('a'));
     }
 }

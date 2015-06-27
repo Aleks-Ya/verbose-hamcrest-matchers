@@ -12,16 +12,17 @@ import static java.lang.String.format;
  */
 class NotEqualFields {
     private final StringBuilder description = new StringBuilder();
+    private final List<Object> processed = new ArrayList<>();
 
     NotEqualFields(Object actual, Object expected) {
         try {
-            verboseEquals(actual, expected, description);
+            verboseEquals(null, actual, expected, description);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
-    private void verboseEquals(Object actual, Object expected, StringBuilder description) throws IllegalAccessException {
+    private void verboseEquals(Field field, Object actual, Object expected, StringBuilder description) throws IllegalAccessException {
         if (actual == null && expected == null) {
             return;
         }
@@ -38,16 +39,23 @@ class NotEqualFields {
                     actual.getClass().getName(), expected.getClass().getName()));
             return;
         }
-        // todo cyclic references check
-        // todo primitive types check
-        if (!actual.equals(expected)) {
-            for (Field field : getAllFields(actual)) {
-                if (!field.isAccessible()) {
-                    field.setAccessible(true);
+        if (!processed.contains(actual)) {
+            processed.add(actual);
+            if (!actual.equals(expected)) {
+                if (isPrimitive(expected.getClass())) {
+                    description.append(field != null ? field.getDeclaringClass().getName() + "#" + field.getName() : "");
+                    description.append(" = ");
+                    description.append(expected.toString());
+                } else {
+                    for (Field subField : getAllFields(actual)) {
+                        if (!subField.isAccessible()) {
+                            subField.setAccessible(true);
+                        }
+                        Object actualValue = subField.get(actual);
+                        Object expectedValue = subField.get(expected);
+                        verboseEquals(subField, actualValue, expectedValue, description);
+                    }
                 }
-                Object actualValue = field.get(actual);
-                Object expectedValue = field.get(expected);
-                verboseEquals(actualValue, expectedValue, description);
             }
         }
     }
@@ -68,5 +76,18 @@ class NotEqualFields {
 
     String getDescription() {
         return description.toString();
+    }
+
+    private boolean isPrimitive(Class clazz) {
+        return clazz.isPrimitive() ||
+                clazz == Boolean.class ||
+                clazz == Byte.class ||
+                clazz == Short.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Float.class ||
+                clazz == Double.class ||
+                clazz == Character.class ||
+                clazz == String.class;
     }
 }

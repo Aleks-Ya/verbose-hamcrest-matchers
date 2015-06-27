@@ -22,16 +22,16 @@ public class VerboseEqualsMatcher extends BaseMatcher<Object> {
     }
 
     @Factory
-    public static Matcher<Object> verboseEqualsTo(Object other) {
-        return new VerboseEqualsMatcher(other, Integer.MAX_VALUE);
+    public static Matcher<Object> verboseEqualsTo(Object expected) {
+        return new VerboseEqualsMatcher(expected, Integer.MAX_VALUE);
     }
 
     @Factory
-    public static Matcher<Object> verboseEqualsTo(Object other, int maxDeep) {
+    public static Matcher<Object> verboseEqualsTo(Object expected, int maxDeep) {
         if (maxDeep < 0) {
             throw new IllegalArgumentException("maxDeep is less than 0: " + maxDeep);
         }
-        return new VerboseEqualsMatcher(other, maxDeep);
+        return new VerboseEqualsMatcher(expected, maxDeep);
     }
 
     @Override
@@ -40,11 +40,11 @@ public class VerboseEqualsMatcher extends BaseMatcher<Object> {
             return true;
         }
         if (actual == null) {
-            description.append("Actual object is null");
+            description.append(expected.toString());
             return false;
         }
         if (expected == null) {
-            description.append("Expected object is null");
+            description.append("null");
             return false;
         }
         if (actual.equals(expected)) {
