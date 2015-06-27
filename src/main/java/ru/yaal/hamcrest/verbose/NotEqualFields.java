@@ -38,6 +38,7 @@ class NotEqualFields<T> {
         }
         if (expected == null) {
             description.append("null");
+            description.append("\n");
             isEquals = false;
             return;
         }

@@ -17,7 +17,7 @@ public class FailTest {
     public void expectedIsNull() {
         thrown.expect(AssertionError.class);
         thrown.expectMessage("null");
-        assertThat(1, VerboseEqualsMatcher.verboseEqualTo(null));
+        assertThat("My mess", 1, VerboseEqualsMatcher.verboseEqualTo(null));
     }
 
     @Test
