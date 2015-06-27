@@ -40,8 +40,7 @@ class NotEqualFields<T> {
             return;
         }
         if (actual.getClass() != expected.getClass()) {
-            description.append(++mismatchIndex);
-            description.append(") ");
+            description.append(nextMismatchIndex());
             description.append(place);
             description.append(": ");
             description.append(format("Different types: actual=%s, expected=%s\n",
@@ -50,14 +49,27 @@ class NotEqualFields<T> {
         }
         if (!processed.contains(actual)) {
             processed.add(actual);
-            if (!actual.equals(expected)) {
+            if (!Helper.isEquals(expected, actual)) {
                 if (isPrimitive(expected.getClass())) {
-                    description.append(++mismatchIndex);
-                    description.append(") ");
+                    description.append(nextMismatchIndex());
                     description.append(place);
                     description.append(" = ");
                     description.append(expected.toString());
                     description.append("\n");
+                } else if (expected.getClass().isArray()) {
+                    Object[] expectedItems = (Object[]) expected;
+                    Object[] actualItems = (Object[]) actual;
+                    if (expectedItems.length != actualItems.length) {
+                        description.append(nextMismatchIndex());
+                        description.append(place);
+//                        description.append(" : ");
+                        description.append(format(" different arrays size: actual=%d, expected=%d\n",
+                                actualItems.length, expectedItems.length));
+                    }
+                    for (int i = 0; i < expectedItems.length; i++) {
+                        String placeInArray = place + "[" + i + "]";
+                        verboseEquals(placeInArray, actualItems[i], expectedItems[i], description);
+                    }
                 } else {
                     for (Field subField : getAllFields(actual)) {
                         if (!subField.isAccessible()) {
@@ -69,6 +81,10 @@ class NotEqualFields<T> {
                 }
             }
         }
+    }
+
+    private String nextMismatchIndex() {
+        return ++mismatchIndex + ") ";
     }
 
     private List<Field> getAllFields(Object object) {

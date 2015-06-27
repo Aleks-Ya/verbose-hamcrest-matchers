@@ -55,14 +55,14 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
                     actual.getClass().getName(), expected.getClass().getName()));
             return false;
         }
-        if (actual.equals(expected)) {
+        if (Helper.isEquals(expected, actual)) {
             return true;
         } else {
             NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
             description.append("\n");
             description.append(notEqualFields.getDescription());
             description.append("     in: ");
-            description.append(actual.toString());
+            description.append(Helper.asString(expected));
             return false;
         }
     }
