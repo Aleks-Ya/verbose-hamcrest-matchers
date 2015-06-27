@@ -14,20 +14,23 @@ import static java.lang.String.format;
 class NotEqualFields<T> {
     private final StringBuilder description = new StringBuilder();
     private final List<Object> processed = new ArrayList<>();
+    private final int maxDeep;
     private int mismatchIndex = 0;
     private boolean isEquals = true;
 
-    public NotEqualFields(T actual, T expected) {
+    public NotEqualFields(T actual, T expected, int maxDeep) {
+        this.maxDeep = maxDeep;
         try {
             String place = actual != null ? actual.getClass().getName() : "";
-            verboseEquals(place, actual, expected);
+            verboseEquals(place, actual, expected, 0);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
-    private void verboseEquals(String place, Object actual, Object expected) throws IllegalAccessException {
+    private void verboseEquals(String place, Object actual, Object expected, int deep) throws IllegalAccessException {
         assert place != null;
+        assert deep >= 0;
         if (actual == null && expected == null) {
             return;
         }
@@ -72,7 +75,7 @@ class NotEqualFields<T> {
                         description.append(format(" different array lengths: actual=%d, expected=%d\n",
                                 actualItems.length, expectedItems.length));
                     } else {
-                        processArray(place, expectedItems, actualItems);
+                        processArray(place, expectedItems, actualItems, deep);
                     }
                 } else if (expected instanceof Collection) {
                     Collection actCollection = (Collection) actual;
@@ -84,26 +87,41 @@ class NotEqualFields<T> {
                         description.append(format(" different collection sizes: actual=%d, expected=%d\n",
                                 actCollection.size(), expCollection.size()));
                     } else {
-                        processArray(place, expCollection.toArray(), actCollection.toArray());
+                        processArray(place, expCollection.toArray(), actCollection.toArray(), deep);
                     }
                 } else {
-                    for (Field subField : getAllFields(actual)) {
-                        if (!subField.isAccessible()) {
-                            subField.setAccessible(true);
+                    if (deep < maxDeep) {
+                        for (Field subField : getAllFields(actual)) {
+                            if (!subField.isAccessible()) {
+                                subField.setAccessible(true);
+                            }
+                            String placeName = subField.getDeclaringClass().getName() + "#" + subField.getName();
+                            verboseEquals(placeName, subField.get(actual), subField.get(expected), ++deep);
                         }
-                        String placeName = subField.getDeclaringClass().getName() + "#" + subField.getName();
-                        verboseEquals(placeName, subField.get(actual), subField.get(expected));
+                    } else {
+                        reportDifferentObjects(place);
                     }
                 }
             }
         }
     }
 
-    private void processArray(String place, Object[] expectedItems, Object[] actualItems) throws IllegalAccessException {
-        for (int i = 0; i < expectedItems.length; i++) {
-            String placeInArray = place + "[" + i + "]";
-            verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
+    private void processArray(String place, Object[] expectedItems, Object[] actualItems, int deep) throws IllegalAccessException {
+        if (deep < maxDeep) {
+            for (int i = 0; i < expectedItems.length; i++) {
+                String placeInArray = place + "[" + i + "]";
+                verboseEquals(placeInArray, actualItems[i], expectedItems[i], ++deep);
+            }
+        } else {
+            reportDifferentObjects(place);
         }
+    }
+
+    private void reportDifferentObjects(String place) {
+        description.append(nextMismatchIndex());
+        description.append(place);
+        description.append(" : ");
+        description.append(" different objects\n");
     }
 
 

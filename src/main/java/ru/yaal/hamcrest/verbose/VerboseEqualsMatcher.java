@@ -17,13 +17,13 @@ import java.util.Arrays;
 public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     private final String message;
     private final Object expected;
-    private final int deep;// todo support deep
+    private final int maxDeep;
     private final StringBuilder description = new StringBuilder();
 
-    private VerboseEqualsMatcher(M expected, String message, int deep) {
+    private VerboseEqualsMatcher(M expected, String message, int maxDeep) {
         this.expected = expected;
         this.message = message;
-        this.deep = deep;
+        this.maxDeep = maxDeep;
     }
 
     @Factory
@@ -51,7 +51,7 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
 
     @Override
     public boolean matches(Object actual) {
-        NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected);
+        NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected, maxDeep);
         if (notEqualFields.isEquals()) {
             return true;
         } else {
