@@ -19,13 +19,13 @@ class NotEqualFields<T> {
     public NotEqualFields(T actual, T expected) {
         try {
             String place = actual != null ? actual.getClass().getName() : "";
-            verboseEquals(place, actual, expected, description);
+            verboseEquals(place, actual, expected);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
-    private void verboseEquals(String place, Object actual, Object expected, StringBuilder description) throws IllegalAccessException {
+    private void verboseEquals(String place, Object actual, Object expected) throws IllegalAccessException {
         assert place != null;
         if (actual == null && expected == null) {
             return;
@@ -72,7 +72,7 @@ class NotEqualFields<T> {
                     }
                     for (int i = 0; i < expectedItems.length; i++) {
                         String placeInArray = place + "[" + i + "]";
-                        verboseEquals(placeInArray, actualItems[i], expectedItems[i], description);
+                        verboseEquals(placeInArray, actualItems[i], expectedItems[i]);
                     }
                 } else {
                     for (Field subField : getAllFields(actual)) {
@@ -80,7 +80,7 @@ class NotEqualFields<T> {
                             subField.setAccessible(true);
                         }
                         String placeName = subField.getDeclaringClass().getName() + "#" + subField.getName();
-                        verboseEquals(placeName, subField.get(actual), subField.get(expected), description);
+                        verboseEquals(placeName, subField.get(actual), subField.get(expected));
                     }
                 }
             }
@@ -91,13 +91,13 @@ class NotEqualFields<T> {
         return ++mismatchIndex + ") ";
     }
 
-    private List<Field> getAllFields(Object object) {
+    private static List<Field> getAllFields(Object object) {
         List<Field> result = new ArrayList<>();
         getAllFields(object.getClass(), result);
         return result;
     }
 
-    private void getAllFields(Class clazz, List<Field> result) {
+    private static void getAllFields(Class clazz, List<Field> result) {
         result.addAll(Arrays.asList(clazz.getDeclaredFields()));
         Class<?> superclass = clazz.getSuperclass();
         if (superclass != Object.class) {
@@ -109,7 +109,7 @@ class NotEqualFields<T> {
         return description.toString();
     }
 
-    private boolean isPrimitive(Class clazz) {
+    private static boolean isPrimitive(Class clazz) {
         return clazz.isPrimitive() ||
                 clazz == Boolean.class ||
                 clazz == Byte.class ||
