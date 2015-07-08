@@ -1,5 +1,7 @@
 package ru.yaal.hamcrest.verbose;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
@@ -15,6 +17,7 @@ import java.util.Arrays;
  * @author yablokov a.
  */
 public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String message;
     private final Object expected;
     private final int maxDeep;
@@ -59,10 +62,7 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
                 description.append(message);
                 description.append("\n");
             }
-            description.append("\n");
-            description.append(notEqualFields.getDescription());
-            description.append("     in: ");
-            description.append(asString(expected));
+            description.append(gson.toJson(actual));
             return false;
         }
     }
@@ -82,4 +82,8 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
         }
     }
 
+    @Override
+    public void describeMismatch(Object item, Description description) {
+        description.appendText(gson.toJson(item));
+    }
 }
