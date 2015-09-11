@@ -12,7 +12,7 @@ import static ru.yaal.hamcrest.verbose.VerboseEqualsMatcher.verboseEqualTo;
 /**
  * @author yablokov a.
  */
-public class MaxDeepTest {
+public class MaxDepthTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 

@@ -20,13 +20,13 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String message;
     private final Object expected;
-    private final int maxDeep;
+    private final int maxDepth;
     private final StringBuilder description = new StringBuilder();
 
-    private VerboseEqualsMatcher(M expected, String message, int maxDeep) {
+    private VerboseEqualsMatcher(M expected, String message, int maxDepth) {
         this.expected = expected;
         this.message = message;
-        this.maxDeep = maxDeep;
+        this.maxDepth = maxDepth;
     }
 
     @Factory
@@ -40,21 +40,21 @@ public class VerboseEqualsMatcher<M> extends BaseMatcher<M> {
     }
 
     @Factory
-    public static <T> Matcher<T> verboseEqualTo(T expected, int maxDeep) {
-        return verboseEqualTo("", expected, maxDeep);
+    public static <T> Matcher<T> verboseEqualTo(T expected, int maxDepth) {
+        return verboseEqualTo("", expected, maxDepth);
     }
 
     @Factory
-    public static <T> Matcher<T> verboseEqualTo(String message, T expected, int maxDeep) {
-        if (maxDeep < 0) {
-            throw new IllegalArgumentException("maxDeep is less than 0: " + maxDeep);
+    public static <T> Matcher<T> verboseEqualTo(String message, T expected, int maxDepth) {
+        if (maxDepth < 0) {
+            throw new IllegalArgumentException("maxDepth is less than 0: " + maxDepth);
         }
-        return new VerboseEqualsMatcher<>(expected, message, maxDeep);
+        return new VerboseEqualsMatcher<>(expected, message, maxDepth);
     }
 
     @Override
     public boolean matches(Object actual) {
-        NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected, maxDeep);
+        NotEqualFields notEqualFields = new NotEqualFields<>(actual, expected, maxDepth);
         if (notEqualFields.isEquals()) {
             return true;
         } else {

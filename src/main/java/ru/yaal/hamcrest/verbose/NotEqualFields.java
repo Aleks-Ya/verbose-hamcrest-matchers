@@ -14,12 +14,12 @@ import static java.lang.String.format;
 class NotEqualFields<T> {
     private final StringBuilder description = new StringBuilder();
     private final List<Object> processed = new ArrayList<>();
-    private final int maxDeep;
+    private final int maxDepth;
     private int mismatchIndex = 0;
     private boolean isEquals = true;
 
-    public NotEqualFields(T actual, T expected, int maxDeep) {
-        this.maxDeep = maxDeep;
+    public NotEqualFields(T actual, T expected, int maxDepth) {
+        this.maxDepth = maxDepth;
         try {
             String place = actual != null ? actual.getClass().getName() : "";
             verboseEquals(place, actual, expected, 0);
@@ -28,9 +28,9 @@ class NotEqualFields<T> {
         }
     }
 
-    private void verboseEquals(String place, Object actual, Object expected, int deep) throws IllegalAccessException {
+    private void verboseEquals(String place, Object actual, Object expected, int depth) throws IllegalAccessException {
         assert place != null;
-        assert deep >= 0;
+        assert depth >= 0;
         if (actual == null && expected == null) {
             return;
         }
@@ -75,7 +75,7 @@ class NotEqualFields<T> {
                         description.append(format(" different array lengths: actual=%d, expected=%d\n",
                                 actualItems.length, expectedItems.length));
                     } else {
-                        processArray(place, expectedItems, actualItems, deep);
+                        processArray(place, expectedItems, actualItems, depth);
                     }
                 } else if (expected instanceof Collection) {
                     Collection actCollection = (Collection) actual;
@@ -87,16 +87,16 @@ class NotEqualFields<T> {
                         description.append(format(" different collection sizes: actual=%d, expected=%d\n",
                                 actCollection.size(), expCollection.size()));
                     } else {
-                        processArray(place, expCollection.toArray(), actCollection.toArray(), deep);
+                        processArray(place, expCollection.toArray(), actCollection.toArray(), depth);
                     }
                 } else {
-                    if (deep < maxDeep) {
+                    if (depth < maxDepth) {
                         for (Field subField : getAllFields(actual)) {
                             if (!subField.isAccessible()) {
                                 subField.setAccessible(true);
                             }
                             String placeName = subField.getDeclaringClass().getName() + "#" + subField.getName();
-                            verboseEquals(placeName, subField.get(actual), subField.get(expected), ++deep);
+                            verboseEquals(placeName, subField.get(actual), subField.get(expected), ++depth);
                         }
                     } else {
                         reportDifferentObjects(place);
@@ -106,11 +106,11 @@ class NotEqualFields<T> {
         }
     }
 
-    private void processArray(String place, Object[] expectedItems, Object[] actualItems, int deep) throws IllegalAccessException {
-        if (deep < maxDeep) {
+    private void processArray(String place, Object[] expectedItems, Object[] actualItems, int depth) throws IllegalAccessException {
+        if (depth < maxDepth) {
             for (int i = 0; i < expectedItems.length; i++) {
                 String placeInArray = place + "[" + i + "]";
-                verboseEquals(placeInArray, actualItems[i], expectedItems[i], ++deep);
+                verboseEquals(placeInArray, actualItems[i], expectedItems[i], ++depth);
             }
         } else {
             reportDifferentObjects(place);
